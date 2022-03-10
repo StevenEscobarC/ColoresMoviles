@@ -4,7 +4,7 @@ import android.graphics.Color;
 
 import java.util.Random;
 
-//logic
+//logic(logica del necocio)
 public class ColorsGame {
     private int targetBackColor = 0;
     private int targetTextColor = 0;
