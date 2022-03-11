@@ -13,12 +13,40 @@ public class ColorsGame {
     private OnChangeTargetColorListener OnChangeTargetColorListener;
     private OnChangeProposedColorListener OnChangeProposedColorListener;
 
-    public ColorsGame(){
-        restartGame();
+    public interface OnChangeTargetColorListener{
+        public abstract void onChange(int backColor, int textColor);
     }
 
-    public void restartGame(){
-        setTargetBackColor(randomColor());
+    public interface OnChangeProposedColorListener{
+        public abstract void onChange(int backColor, int textColor);
+    }
+
+    public OnChangeTargetColorListener getOnChangeTargetColorListener() {
+        return OnChangeTargetColorListener;
+    }
+
+    public void setOnChangeTargetColorListener(OnChangeTargetColorListener onChangeTargetColorListener) {
+        OnChangeTargetColorListener = onChangeTargetColorListener;
+    }
+
+    public OnChangeProposedColorListener getOnChangeProposedColorListener() {
+        return OnChangeProposedColorListener;
+    }
+
+    public void setOnChangeProposedColorListener(OnChangeProposedColorListener onChangeProposedColorListener) {
+        OnChangeProposedColorListener = onChangeProposedColorListener;
+    }
+
+    public static int randomColor(){
+        Random rand=new Random();
+
+        int redVal = rand.nextInt(256);
+        int blueVal = rand.nextInt(256);
+        int greenVal = rand.nextInt(256);
+
+        int color = Color.rgb(redVal, greenVal, blueVal);
+
+        return color;
     }
 
     public static int getSuggestedTextColor(int backColor){
@@ -26,7 +54,7 @@ public class ColorsGame {
         int greenVal = Color.green(backColor);
         int blueVal = Color.blue(backColor);
 
-        int greyVal = (redVal + greenVal + blueVal) / 3;
+        int greyVal = (int)(redVal*0.20 + greenVal*0.75 + blueVal*0.05);
         int textColor = Color.BLACK;
 
         if(255 - greyVal > greyVal){
@@ -36,11 +64,26 @@ public class ColorsGame {
         return textColor;
     }
 
-    public int getScore(){
-        double dist = distance(targetBackColor, proposedBackColor);
-        int score = (int)(100 - Math.min(dist, 100));
+    public int getProposedBackColor() {
 
-        return score;
+        return proposedBackColor;
+
+    }
+
+    public void setProposedBackColor(int newBackColor) {
+        proposedBackColor = newBackColor;
+
+        proposedTextColor = getSuggestedTextColor(proposedBackColor);
+
+        if (getOnChangeProposedColorListener() != null){
+            getOnChangeProposedColorListener().onChange(proposedBackColor, proposedTextColor);
+        }
+    }
+
+    public int getProposedTextColor() {
+
+        return proposedTextColor;
+
     }
 
     //return the distance between two colors
@@ -57,29 +100,26 @@ public class ColorsGame {
         int resGreenVal =(int)Math.pow((greenVal1-greenVal2),2);
         int resBlueVal =(int)Math.pow((blueVal1-blueVal2),2);
 
-        double dist = Math.sqrt(resRedVal + resGreenVal + resBlueVal);
+        double distance = Math.sqrt(resRedVal + resGreenVal + resBlueVal);
 
-        return dist;
+        return distance;
     }
 
-    public static int randomColor(){
-        Random rand=new Random();
+    public int getScore(){
+        double distance = distance(targetBackColor, proposedBackColor);
+        int score = (int)(100 - Math.min(distance, 100));
 
-        int redVal = rand.nextInt(256);
-        int blueVal = rand.nextInt(256);
-        int greenVal = rand.nextInt(256);
-
-        int color = Color.rgb(redVal, greenVal, blueVal);
-
-        return color;
+        return score;
     }
 
     public int getTargetBackColor() {
+
         return targetBackColor;
+
     }
 
-    public void setTargetBackColor(int newTargetBackColor) {
-        targetBackColor = newTargetBackColor;
+    public void setTargetBackColor(int newBackColor) {
+        targetBackColor = newBackColor;
         targetTextColor = getSuggestedTextColor(targetBackColor);
 
         do {
@@ -93,64 +133,60 @@ public class ColorsGame {
         }
 
         if (getOnChangeProposedColorListener() != null){
-            getOnChangeProposedColorListener().onChange(targetBackColor, targetTextColor);
+            getOnChangeProposedColorListener().onChange(proposedBackColor, proposedTextColor);
         }
-
-
 
     }
 
     public int getTargetTextColor() {
+
         return targetTextColor;
+
     }
 
     public void setTargetTextColor(int targetTextColor) {
+
         this.targetTextColor = targetTextColor;
-    }
 
-    public int getProposedBackColor() {
-        return proposedBackColor;
-    }
-
-    public void setProposedBackColor(int newProposedBackColor) {
-        proposedBackColor = newProposedBackColor;
-
-        proposedTextColor = getSuggestedTextColor(proposedBackColor);
-
-        if (getOnChangeProposedColorListener() != null){
-            getOnChangeProposedColorListener().onChange(targetBackColor, targetTextColor);
-        }
-    }
-
-    public int getProposedTextColor() {
-        return proposedTextColor;
     }
 
     public void setProposedTextColor(int proposedTextColor) {
         this.proposedTextColor = proposedTextColor;
     }
 
-    public ColorsGame.OnChangeTargetColorListener getOnChangeTargetColorListener() {
-        return OnChangeTargetColorListener;
+    public ColorsGame(){
+
+        restartGame();
+
     }
 
-    public void setOnChangeTargetColorListener(ColorsGame.OnChangeTargetColorListener onChangeTargetColorListener) {
-        OnChangeTargetColorListener = onChangeTargetColorListener;
+    public void restartGame(){
+
+        setTargetBackColor(randomColor());
+
     }
 
-    public ColorsGame.OnChangeProposedColorListener getOnChangeProposedColorListener() {
-        return OnChangeProposedColorListener;
-    }
 
-    public void setOnChangeProposedColorListener(ColorsGame.OnChangeProposedColorListener onChangeProposedColorListener) {
-        OnChangeProposedColorListener = onChangeProposedColorListener;
-    }
 
-    public interface OnChangeTargetColorListener{
-        void onChange(int backColor, int textColor);
-    }
 
-    public interface OnChangeProposedColorListener{
-        void onChange(int backColor, int textColor);
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
